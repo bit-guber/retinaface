@@ -48,7 +48,7 @@ class getShape( Layer) :
     def call( self, x):
         return tf.shape( x )
 class getSlice(Layer):
-    def call(self, x, offsets, size ):
+    def call(self, x = [], offsets = 0, size = 0 ):
         return tf.slice(  x, offsets, size) 
 def load_weights(model: Model):
     """
