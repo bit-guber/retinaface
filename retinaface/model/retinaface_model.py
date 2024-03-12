@@ -1025,9 +1025,13 @@ def build_model() -> Model:
     ssh_m3_det_context_conv1_bn = BatchNormalization(
         epsilon=1.9999999494757503e-05, name="ssh_m3_det_context_conv1_bn", trainable=False
     )(ssh_m3_det_context_conv1)
-
-    x1_shape = tf.shape(ssh_c3_up)
-    x2_shape = tf.shape(ssh_c2_lateral_relu)
+        class getShape( Layer ):
+        def call(self, x):
+            return tf.shape(x)
+    # x1_shape = tf.shape(ssh_m2_red_up)
+    # x2_shape = tf.shape(ssh_m1_red_conv_relu)
+    x1_shape = getShape()( ssh_m2_red_up )
+    x2_shape = getShape()(  ssh_m1_red_conv_relu )
     offsets = [0, (x1_shape[1] - x2_shape[1]) // 2, (x1_shape[2] - x2_shape[2]) // 2, 0]
     size = [-1, x2_shape[1], x2_shape[2], -1]
     crop0 = tf.slice(ssh_c3_up, offsets, size, "crop0")
