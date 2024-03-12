@@ -25,6 +25,7 @@ if tf_version == 1:
         UpSampling2D,
         concatenate,
         Softmax,
+        Layer
     )
 
 else:
@@ -40,9 +41,12 @@ else:
         UpSampling2D,
         concatenate,
         Softmax,
+        Layer
     )
 
-
+class getShape( Layer) :
+    def call( self, x):
+        return tf.shape( x )
 def load_weights(model: Model):
     """
     Loading pre-trained weights for the RetinaFace model
@@ -1024,8 +1028,10 @@ def build_model() -> Model:
         epsilon=1.9999999494757503e-05, name="ssh_m3_det_context_conv1_bn", trainable=False
     )(ssh_m3_det_context_conv1)
 
-    x1_shape = tf.shape(ssh_c3_up)
-    x2_shape = tf.shape(ssh_c2_lateral_relu)
+    x1_shape = getShape()(ssh_c3_up)
+    x2_shape = getShape()(ssh_c2_lateral_relu)
+    # x1_shape = tf.shape(ssh_c3_up)
+    # x2_shape = tf.shape(ssh_c2_lateral_relu)
     offsets = [0, (x1_shape[1] - x2_shape[1]) // 2, (x1_shape[2] - x2_shape[2]) // 2, 0]
     size = [-1, x2_shape[1], x2_shape[2], -1]
     crop0 = tf.slice(ssh_c3_up, offsets, size, "crop0")
@@ -1263,7 +1269,8 @@ def build_model() -> Model:
         face_rpn_cls_score_reshape_stride32
     )
 
-    input_shape = [tf.shape(face_rpn_cls_prob_stride32)[k] for k in range(4)]
+    # input_shape = [tf.shape(face_rpn_cls_prob_stride32)[k] for k in range(4)]
+    input_shape = [getShape()(face_rpn_cls_prob_stride32)[k] for k in range(4)]
     sz = tf.dtypes.cast(input_shape[1] / 2, dtype=tf.int32)
     inter_1 = face_rpn_cls_prob_stride32[:, 0:sz, :, 0]
     inter_2 = face_rpn_cls_prob_stride32[:, 0:sz, :, 1]
@@ -1413,7 +1420,8 @@ def build_model() -> Model:
         face_rpn_cls_score_reshape_stride16
     )
 
-    input_shape = [tf.shape(face_rpn_cls_prob_stride16)[k] for k in range(4)]
+    # input_shape = [tf.shape(face_rpn_cls_prob_stride16)[k] for k in range(4)]
+    input_shape = [getShape()(face_rpn_cls_prob_stride16)[k] for k in range(4)]
     sz = tf.dtypes.cast(input_shape[1] / 2, dtype=tf.int32)
     inter_1 = face_rpn_cls_prob_stride16[:, 0:sz, :, 0]
     inter_2 = face_rpn_cls_prob_stride16[:, 0:sz, :, 1]
@@ -1490,7 +1498,8 @@ def build_model() -> Model:
         face_rpn_cls_score_reshape_stride8
     )
 
-    input_shape = [tf.shape(face_rpn_cls_prob_stride8)[k] for k in range(4)]
+    # input_shape = [tf.shape(face_rpn_cls_prob_stride8)[k] for k in range(4)]
+    input_shape = [getShape()(face_rpn_cls_prob_stride8)[k] for k in range(4)]
     sz = tf.dtypes.cast(input_shape[1] / 2, dtype=tf.int32)
     inter_1 = face_rpn_cls_prob_stride8[:, 0:sz, :, 0]
     inter_2 = face_rpn_cls_prob_stride8[:, 0:sz, :, 1]
