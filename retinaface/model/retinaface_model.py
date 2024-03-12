@@ -1147,9 +1147,6 @@ def build_model() -> Model:
     ssh_m2_det_context_conv1_bn = BatchNormalization(
         epsilon=1.9999999494757503e-05, name="ssh_m2_det_context_conv1_bn", trainable=False
     )(ssh_m2_det_context_conv1)
-    class getShape( Layer) :
-        def call( self, x):
-            return tf.shape( x )
     x1_shape = getShape()( ssh_m2_red_up )
     x2_shape = getShape()(ssh_m1_red_conv_relu)
     # x1_shape = tf.shape(ssh_m2_red_up)
