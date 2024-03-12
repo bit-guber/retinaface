@@ -47,6 +47,9 @@ else:
 class getShape( Layer) :
     def call( self, x):
         return tf.shape( x )
+class getSlice(Layer):
+    def call(self, x, offsets, size ):
+        return tf.slice(  x, offsets, size) 
 def load_weights(model: Model):
     """
     Loading pre-trained weights for the RetinaFace model
@@ -1032,9 +1035,11 @@ def build_model() -> Model:
     x2_shape = getShape()(ssh_c2_lateral_relu)
     # x1_shape = tf.shape(ssh_c3_up)
     # x2_shape = tf.shape(ssh_c2_lateral_relu)
+    
     offsets = [0, (x1_shape[1] - x2_shape[1]) // 2, (x1_shape[2] - x2_shape[2]) // 2, 0]
     size = [-1, x2_shape[1], x2_shape[2], -1]
-    crop0 = tf.slice(ssh_c3_up, offsets, size, "crop0")
+    crop0 = getSlice()( ssh_c3_up, offsets, size ) 
+    # crop0 = tf.slice(ssh_c3_up, offsets, size, "crop0")
 
     ssh_m3_det_context_conv1_relu = ReLU(name="ssh_m3_det_context_conv1_relu")(
         ssh_m3_det_context_conv1_bn
@@ -1153,7 +1158,8 @@ def build_model() -> Model:
     # x2_shape = tf.shape(ssh_m1_red_conv_relu)
     offsets = [0, (x1_shape[1] - x2_shape[1]) // 2, (x1_shape[2] - x2_shape[2]) // 2, 0]
     size = [-1, x2_shape[1], x2_shape[2], -1]
-    crop1 = tf.slice(ssh_m2_red_up, offsets, size, "crop1")
+    crop1 = getSlice()( ssh_m2_red_up, offsets, size ) 
+    # crop1 = tf.slice(ssh_m2_red_up, offsets, size, "crop1")
 
     ssh_m3_det_concat = concatenate(
         [ssh_m3_det_conv1_bn, ssh_m3_det_context_conv2_bn, ssh_m3_det_context_conv3_2_bn],
